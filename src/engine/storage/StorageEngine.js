@@ -143,7 +143,7 @@ class StorageEngine {
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     const payload = {
       version: 1,
-      tables: Array.from(this.tables.entries()),
+      tables: structuredClone(Array.from(this.tables.entries())),
       indexes: Array.from(this.indexes.entries()).map(([table, idxMap]) => [
         table,
         Array.from(idxMap.entries()).map(([field, valueMap]) => [
@@ -175,19 +175,33 @@ class StorageEngine {
   }
 
   cloneState() {
-    return JSON.parse(JSON.stringify({
-      tables: Array.from(this.tables.entries()),
-      wal: this.wal
-    }));
+    return {
+      tables: structuredClone(Array.from(this.tables.entries())),
+      indexes: Array.from(this.indexes.entries()).map(([table, idxMap]) => [
+        table,
+        Array.from(idxMap.entries()).map(([field, valueMap]) => [
+          field,
+          Array.from(valueMap.entries()).map(([value, set]) => [value, Array.from(set)])
+        ])
+      ]),
+      wal: structuredClone(this.wal)
+    };
   }
 
   restoreState(state) {
     this.tables = new Map(state.tables || []);
+    this.indexes = new Map(
+      (state.indexes || []).map(([table, idxEntries]) => [
+        table,
+        new Map(
+          idxEntries.map(([field, values]) => [
+            field,
+            new Map(values.map(([value, setValues]) => [value, new Set(setValues)]))
+          ])
+        )
+      ])
+    );
     this.wal = state.wal || [];
-    for (const table of this.tables.keys()) {
-      if (!this.indexes.has(table)) this.indexes.set(table, new Map());
-      this.rebuildIndexes(table);
-    }
   }
 }
 

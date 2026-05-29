@@ -30,8 +30,8 @@ function applyAggregates(rows, columns, groupBy) {
       if (count) {
         entry[column] = groupedRows.length;
       } else if (sum) {
-        const target = sum[1].toLowerCase();
-        entry[column] = groupedRows.reduce((acc, row) => acc + Number(row[target] ?? row[sum[1]] ?? 0), 0);
+        const target = sum[1];
+        entry[column] = groupedRows.reduce((acc, row) => acc + Number(row[target] ?? 0), 0);
       }
     }
     result.push(entry);
@@ -64,7 +64,7 @@ class ExecutionEngine {
       if (ast.limit !== null) {
         rows = rows.slice(0, ast.limit);
       }
-      cacheEngine.setQueryResult(queryCacheKey, rows);
+      cacheEngine.setQueryResult(queryCacheKey, ast.table, rows);
       return rows;
     }
 

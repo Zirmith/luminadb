@@ -33,8 +33,8 @@ class CacheEngine {
     return this.queryPlanCache.get(key) || null;
   }
 
-  setQueryResult(key, rows) {
-    this.queryResultCache.set(key, { table: this.extractTable(key), rows });
+  setQueryResult(key, table, rows) {
+    this.queryResultCache.set(key, { table, rows });
   }
 
   getQueryResult(key) {
@@ -46,14 +46,6 @@ class CacheEngine {
       if (value.table === table) {
         this.queryResultCache.delete(key);
       }
-    }
-  }
-
-  extractTable(key) {
-    try {
-      return JSON.parse(key).table || null;
-    } catch {
-      return null;
     }
   }
 

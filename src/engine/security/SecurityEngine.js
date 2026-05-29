@@ -28,7 +28,7 @@ class SecurityEngine {
 
   validateApiKey(key) {
     const valid = this.apiKeys.has(key);
-    this.log('api_key_check', { keySuffix: key.slice(-4), valid });
+    this.log('api_key_check', { valid });
     return valid;
   }
 

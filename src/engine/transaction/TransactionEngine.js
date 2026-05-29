@@ -10,7 +10,7 @@ class TransactionEngine {
 
   savepoint() {
     this.begin();
-    return this.stack.length - 1;
+    return { depth: this.stack.length - 1 };
   }
 
   rollback() {
@@ -19,8 +19,9 @@ class TransactionEngine {
     this.storageEngine.restoreState(state);
   }
 
-  rollbackTo(savepointId) {
-    while (this.stack.length > savepointId) {
+  rollbackTo(savepoint) {
+    const depth = typeof savepoint === 'object' ? savepoint.depth : savepoint;
+    while (this.stack.length > depth) {
       this.rollback();
     }
   }

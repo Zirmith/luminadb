@@ -3,12 +3,21 @@ function normalizeValue(raw) {
   if ((value.startsWith("'") && value.endsWith("'")) || (value.startsWith('"') && value.endsWith('"'))) {
     return value.slice(1, -1);
   }
-  if (!Number.isNaN(Number(value))) {
+  if (value !== '' && !Number.isNaN(Number(value))) {
     return Number(value);
   }
   if (value.toLowerCase() === 'true') return true;
   if (value.toLowerCase() === 'false') return false;
   return value;
+}
+
+
+function isEscaped(input, index) {
+  let backslashes = 0;
+  for (let i = index - 1; i >= 0 && input[i] === "\\"; i -= 1) {
+    backslashes += 1;
+  }
+  return backslashes % 2 === 1;
 }
 
 function splitCsv(input) {
@@ -17,7 +26,7 @@ function splitCsv(input) {
   let quote = null;
   for (let i = 0; i < input.length; i += 1) {
     const char = input[i];
-    if ((char === '"' || char === "'") && input[i - 1] !== '\\') {
+    if ((char === '"' || char === "'") && !isEscaped(input, i)) {
       quote = quote === char ? null : quote || char;
     }
     if (char === ',' && !quote) {
@@ -37,7 +46,7 @@ function splitByAnd(input) {
   let quote = null;
   for (let i = 0; i < input.length; i += 1) {
     const char = input[i];
-    if ((char === '"' || char === "'") && input[i - 1] !== '\\') {
+    if ((char === '"' || char === "'") && !isEscaped(input, i)) {
       quote = quote === char ? null : quote || char;
     }
     if (!quote && input.slice(i, i + 5).toUpperCase() === ' AND ') {

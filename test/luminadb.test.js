@@ -51,7 +51,7 @@ test('supports savepoints without rolling back outer transaction', async () => {
     tx.rollbackTo(savepoint);
   });
 
-  const rows = db.query('SELECT * FROM players ORDER BY id ASC');
+  const rows = db.query('SELECT * FROM players ORDER BY name ASC');
   assert.equal(rows.rowCount, 1);
   assert.equal(rows.rows[0].name, 'outer');
 });
