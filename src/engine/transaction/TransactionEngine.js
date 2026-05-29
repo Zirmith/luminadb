@@ -10,7 +10,7 @@ class TransactionEngine {
 
   savepoint() {
     this.begin();
-    return this.stack.length;
+    return this.stack.length - 1;
   }
 
   rollback() {
@@ -20,7 +20,7 @@ class TransactionEngine {
   }
 
   rollbackTo(savepointId) {
-    while (this.stack.length >= savepointId) {
+    while (this.stack.length > savepointId) {
       this.rollback();
     }
   }

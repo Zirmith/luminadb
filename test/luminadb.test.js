@@ -39,3 +39,19 @@ test('supports explain with index strategy', () => {
   const plan = db.explain('SELECT * FROM players WHERE coins = 10');
   assert.equal(plan.strategy.accessPath, 'INDEX_SCAN');
 });
+
+test('supports savepoints without rolling back outer transaction', async () => {
+  const db = new LuminaDBEngine();
+  db.defineTable('players', { fields: { name: 'string', coins: 'number' } });
+
+  await db.transaction(async (tx) => {
+    tx.query("INSERT INTO players (name, coins) VALUES ('outer', 1)");
+    const savepoint = tx.savepoint();
+    tx.query("INSERT INTO players (name, coins) VALUES ('inner', 2)");
+    tx.rollbackTo(savepoint);
+  });
+
+  const rows = db.query('SELECT * FROM players ORDER BY id ASC');
+  assert.equal(rows.rowCount, 1);
+  assert.equal(rows.rows[0].name, 'outer');
+});

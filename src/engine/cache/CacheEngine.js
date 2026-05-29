@@ -34,18 +34,26 @@ class CacheEngine {
   }
 
   setQueryResult(key, rows) {
-    this.queryResultCache.set(key, rows);
+    this.queryResultCache.set(key, { table: this.extractTable(key), rows });
   }
 
   getQueryResult(key) {
-    return this.queryResultCache.get(key) || null;
+    return this.queryResultCache.get(key)?.rows || null;
   }
 
   invalidateTable(table) {
-    for (const [key] of this.queryResultCache.entries()) {
-      if (key.includes(`"table":"${table}"`)) {
+    for (const [key, value] of this.queryResultCache.entries()) {
+      if (value.table === table) {
         this.queryResultCache.delete(key);
       }
+    }
+  }
+
+  extractTable(key) {
+    try {
+      return JSON.parse(key).table || null;
+    } catch {
+      return null;
     }
   }
 
