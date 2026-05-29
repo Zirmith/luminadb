@@ -66,10 +66,12 @@ lumina start
 lumina backup ./backup.lmdb
 lumina restore ./backup.lmdb
 lumina cluster
+lumina web
 ```
 
 ## Development
 
 ```bash
 npm test
+npm run web
 ```

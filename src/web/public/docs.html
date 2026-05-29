@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LuminaDB Docs</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <h1>LuminaDB</h1>
+        </div>
+        <nav class="nav">
+          <a href="/"><i data-feather="home"></i>Landing</a>
+          <a href="/docs"><i data-feather="book-open"></i>Docs</a>
+          <a href="/api"><i data-feather="code"></i>API</a>
+          <a href="/auth"><i data-feather="user"></i>Account</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <button class="mobile-toggle" data-nav-toggle>Open Navigation</button>
+        <section class="section">
+          <h3>Documentation Overview</h3>
+          <p class="small">LuminaDB combines query execution, storage, cache, transactions, replication, and security in one engine.</p>
+        </section>
+        <section class="grid">
+          <article class="card">
+            <h3>Quick Start</h3>
+            <p class="small">Initialize with <code>lumina init</code>, then run <code>lumina start</code> for engine networking.</p>
+          </article>
+          <article class="card">
+            <h3>Data Lifecycle</h3>
+            <p class="small">Use checkpoints and snapshots for persistence, and WAL for durability and recovery.</p>
+          </article>
+          <article class="card">
+            <h3>Security</h3>
+            <p class="small">Account APIs use salted PBKDF2 hashes, minimum-length credentials, and expiring session tokens.</p>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="/assets/app.js"></script>
+  </body>
+</html>

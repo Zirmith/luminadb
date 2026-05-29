@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LuminaDB Account</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <h1>LuminaDB</h1>
+        </div>
+        <nav class="nav">
+          <a href="/"><i data-feather="home"></i>Landing</a>
+          <a href="/docs"><i data-feather="book-open"></i>Docs</a>
+          <a href="/api"><i data-feather="code"></i>API</a>
+          <a href="/auth"><i data-feather="user"></i>Account</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <button class="mobile-toggle" data-nav-toggle>Open Navigation</button>
+        <section class="grid">
+          <article class="section">
+            <h3>Create account</h3>
+            <form data-signup-form>
+              <div class="form-group">
+                <label for="signup-username">Username</label>
+                <input id="signup-username" name="username" required minlength="3">
+              </div>
+              <div class="form-group">
+                <label for="signup-email">Email</label>
+                <input id="signup-email" type="email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="signup-password">Password</label>
+                <input id="signup-password" type="password" name="password" required minlength="12">
+              </div>
+              <button type="submit">Sign up</button>
+              <div class="status" data-status></div>
+            </form>
+          </article>
+          <article class="section">
+            <h3>Sign in</h3>
+            <form data-login-form>
+              <div class="form-group">
+                <label for="login-identifier">Username or email</label>
+                <input id="login-identifier" name="identifier" required>
+              </div>
+              <div class="form-group">
+                <label for="login-password">Password</label>
+                <input id="login-password" type="password" name="password" required>
+              </div>
+              <button type="submit">Login</button>
+              <div class="status" data-status></div>
+            </form>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="/assets/app.js"></script>
+  </body>
+</html>

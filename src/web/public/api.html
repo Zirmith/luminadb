@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LuminaDB API</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <h1>LuminaDB</h1>
+        </div>
+        <nav class="nav">
+          <a href="/"><i data-feather="home"></i>Landing</a>
+          <a href="/docs"><i data-feather="book-open"></i>Docs</a>
+          <a href="/api"><i data-feather="code"></i>API</a>
+          <a href="/auth"><i data-feather="user"></i>Account</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <button class="mobile-toggle" data-nav-toggle>Open Navigation</button>
+        <section class="section">
+          <h3>API Catalog</h3>
+          <p class="small">Production-ready endpoints for system checks and account authentication.</p>
+        </section>
+        <section class="section">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>GET</td>
+                <td>/api/status</td>
+                <td>Returns service health and timestamp.</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>/api/docs</td>
+                <td>Returns available API endpoints.</td>
+              </tr>
+              <tr>
+                <td>POST</td>
+                <td>/api/auth/signup</td>
+                <td>Registers a new user account.</td>
+              </tr>
+              <tr>
+                <td>POST</td>
+                <td>/api/auth/login</td>
+                <td>Authenticates by username or email and returns a token.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="/assets/app.js"></script>
+  </body>
+</html>
