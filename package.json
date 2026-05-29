@@ -1,0 +1,16 @@
+{
+  "name": "luminadb",
+  "version": "0.1.0",
+  "description": "LuminaDB engine for Roblox multiplayer games",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "bin": {
+    "lumina": "src/cli/lumina.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
