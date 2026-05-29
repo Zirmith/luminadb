@@ -110,6 +110,15 @@ body {
   margin-top: 0;
 }
 
+.eyebrow {
+  margin: 0 0 0.6rem;
+  color: #b9d6ff;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+}
+
 .hero h2 {
   font-size: clamp(1.35rem, 2.2vw, 2.1rem);
   margin-bottom: 0.55rem;
@@ -120,6 +129,22 @@ body {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.highlight-row {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.highlight-row span {
+  border: 1px solid rgba(130, 157, 214, 0.34);
+  border-radius: 999px;
+  padding: 0.32rem 0.62rem;
+  font-size: 0.82rem;
+  color: #d8e7ff;
+  background: rgba(18, 33, 67, 0.6);
 }
 
 .hero-link {
@@ -160,6 +185,10 @@ body {
 .card:hover {
   transform: translateY(-2px);
   border-color: rgba(87, 168, 255, 0.45);
+}
+
+.creator-proof {
+  margin-top: 1.15rem;
 }
 
 .small {
