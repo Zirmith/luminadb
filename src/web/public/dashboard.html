@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LuminaDB Dashboard</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <h1>LuminaDB</h1>
+        </div>
+        <nav class="nav">
+          <a href="/"><i data-feather="home"></i>Landing</a>
+          <a href="/docs"><i data-feather="book-open"></i>Docs</a>
+          <a href="/api"><i data-feather="code"></i>API</a>
+          <a href="/auth"><i data-feather="user"></i>Account</a>
+          <a href="/dashboard"><i data-feather="grid"></i>Dashboard</a>
+        </nav>
+      </aside>
+      <main class="main">
+        <button class="mobile-toggle" data-nav-toggle>Open Navigation</button>
+        <section class="hero">
+          <h2>Operations Dashboard</h2>
+          <p class="small">Manage API keys, link Roblox games, and monitor live player counts.</p>
+          <div class="status" data-dashboard-status></div>
+        </section>
+
+        <section class="grid dashboard-metrics">
+          <article class="card">
+            <h3>Linked Games</h3>
+            <p class="metric" data-metric-linked-games>0</p>
+          </article>
+          <article class="card">
+            <h3>API Keys</h3>
+            <p class="metric" data-metric-api-keys>0</p>
+          </article>
+        </section>
+
+        <section class="grid dashboard-forms">
+          <article class="section">
+            <h3>Create API Key</h3>
+            <form data-api-key-form>
+              <div class="form-group">
+                <label for="api-key-name">Key name</label>
+                <input id="api-key-name" name="name" required maxlength="64" placeholder="Production game key">
+              </div>
+              <button type="submit">Generate key</button>
+              <div class="status" data-api-key-status></div>
+              <div class="secret-box" data-api-key-secret hidden></div>
+            </form>
+          </article>
+
+          <article class="section">
+            <h3>Link Roblox Game</h3>
+            <form data-link-game-form>
+              <div class="form-group">
+                <label for="roblox-place-id">Roblox place ID</label>
+                <input id="roblox-place-id" name="placeId" required inputmode="numeric" pattern="[0-9]+" placeholder="1234567890">
+              </div>
+              <button type="submit">Link game</button>
+              <div class="status" data-link-game-status></div>
+            </form>
+          </article>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h3>API Keys</h3>
+            <button type="button" class="ghost-button" data-refresh-dashboard>Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Key Prefix</th>
+                  <th>Created</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody data-api-keys-list>
+                <tr><td colspan="4" class="small">No API keys yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h3>Linked Roblox Games</h3>
+            <button type="button" class="ghost-button" data-refresh-dashboard>Refresh live player counts</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Game</th>
+                  <th>Universe ID</th>
+                  <th>Live Players</th>
+                  <th>Visits</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody data-games-list>
+                <tr><td colspan="5" class="small">No linked games yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="/assets/app.js"></script>
+  </body>
+</html>

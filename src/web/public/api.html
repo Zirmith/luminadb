@@ -18,6 +18,7 @@
           <a href="/docs"><i data-feather="book-open"></i>Docs</a>
           <a href="/api"><i data-feather="code"></i>API</a>
           <a href="/auth"><i data-feather="user"></i>Account</a>
+          <a href="/dashboard"><i data-feather="grid"></i>Dashboard</a>
         </nav>
       </aside>
       <main class="main">
@@ -55,6 +56,26 @@
                 <td>POST</td>
                 <td>/api/auth/login</td>
                 <td>Authenticates by username or email and returns a token.</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>/api/dashboard</td>
+                <td>Returns authenticated dashboard metrics.</td>
+              </tr>
+              <tr>
+                <td>POST</td>
+                <td>/api/dashboard/api-keys</td>
+                <td>Creates a dashboard API key (returns value once).</td>
+              </tr>
+              <tr>
+                <td>POST</td>
+                <td>/api/dashboard/games/link</td>
+                <td>Links a Roblox game by place ID and stores universe metadata.</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>/api/dashboard/games</td>
+                <td>Returns linked games with live Roblox player counts.</td>
               </tr>
             </tbody>
           </table>
