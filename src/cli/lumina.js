@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { LuminaDBEngine } = require('../engine/LuminaDBEngine');
+const { startWebsiteServer } = require('../web/server');
 
 const command = process.argv[2];
 const cwd = process.cwd();
@@ -36,7 +37,16 @@ if (command === 'init') {
   console.log(`Restored from ${source}`);
 } else if (command === 'cluster') {
   console.log('Cluster mode enabled (replication events active).');
+} else if (command === 'web') {
+  startWebsiteServer()
+    .then(({ host, port }) => {
+      console.log(`LuminaDB website running at http://${host}:${port}`);
+    })
+    .catch((error) => {
+      console.error('Unable to start website:', error.message);
+      process.exitCode = 1;
+    });
 } else {
-  console.log('Usage: lumina <init|start|backup|restore|cluster>');
+  console.log('Usage: lumina <init|start|backup|restore|cluster|web>');
   process.exitCode = 1;
 }

@@ -8,7 +8,8 @@
     "lumina": "src/cli/lumina.js"
   },
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "web": "node src/web/server.js"
   },
   "engines": {
     "node": ">=18"
