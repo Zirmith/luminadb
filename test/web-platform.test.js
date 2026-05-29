@@ -6,7 +6,7 @@ const path = require('node:path');
 const http = require('node:http');
 const { startWebsiteServer } = require('../src/web/server');
 
-function requestJson(port, method, pathname, body) {
+function httpRequest(port, method, pathname, body) {
   return new Promise((resolve, reject) => {
     const payload = body ? JSON.stringify(body) : null;
     const req = http.request(
@@ -45,7 +45,7 @@ function requestJson(port, method, pathname, body) {
   });
 }
 
-test('serves pages and supports signup/login', async () => {
+test('web server handles page routes and auth endpoints', async () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'lumina-web-'));
   const usersFile = path.join(tempDir, 'users.json');
 
@@ -58,40 +58,41 @@ test('serves pages and supports signup/login', async () => {
   const port = app.port;
 
   try {
-    const landing = await requestJson(port, 'GET', '/');
+    const landing = await httpRequest(port, 'GET', '/');
     assert.equal(landing.statusCode, 200);
     assert.match(landing.body, /LuminaDB Platform/);
 
-    const signup = await requestJson(port, 'POST', '/api/auth/signup', {
+    const signup = await httpRequest(port, 'POST', '/api/auth/signup', {
       username: 'playerone',
       email: 'playerone@example.com',
-      password: 'StrongPass123'
+      password: 'StrongPass1234'
     });
     assert.equal(signup.statusCode, 201);
     const signupPayload = JSON.parse(signup.body);
     assert.equal(signupPayload.user.username, 'playerone');
 
-    const duplicate = await requestJson(port, 'POST', '/api/auth/signup', {
+    const duplicate = await httpRequest(port, 'POST', '/api/auth/signup', {
       username: 'playerone',
       email: 'playerone@example.com',
-      password: 'StrongPass123'
+      password: 'StrongPass1234'
     });
     assert.equal(duplicate.statusCode, 409);
 
-    const login = await requestJson(port, 'POST', '/api/auth/login', {
+    const login = await httpRequest(port, 'POST', '/api/auth/login', {
       identifier: 'playerone',
-      password: 'StrongPass123'
+      password: 'StrongPass1234'
     });
     assert.equal(login.statusCode, 200);
     const loginPayload = JSON.parse(login.body);
     assert.ok(loginPayload.token);
+    assert.match(loginPayload.token, /^[a-f0-9]{64}$/);
 
-    const status = await requestJson(port, 'GET', '/api/status');
+    const status = await httpRequest(port, 'GET', '/api/status');
     assert.equal(status.statusCode, 200);
     const statusPayload = JSON.parse(status.body);
     assert.equal(statusPayload.status, 'ok');
 
-    const badLogin = await requestJson(port, 'POST', '/api/auth/login', {
+    const badLogin = await httpRequest(port, 'POST', '/api/auth/login', {
       identifier: 'playerone',
       password: 'WrongPass'
     });

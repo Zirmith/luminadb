@@ -6,6 +6,10 @@ const crypto = require('node:crypto');
 const DEFAULT_PUBLIC_DIR = path.join(__dirname, 'public');
 const DEFAULT_DATA_DIR = path.join(__dirname, 'data');
 const DEFAULT_USERS_FILE = path.join(DEFAULT_DATA_DIR, 'users.json');
+const MAX_PAYLOAD_SIZE_BYTES = 1_000_000;
+const PBKDF2_ITERATIONS = 600_000;
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+const SESSION_CLEANUP_INTERVAL_MS = 15 * 60 * 1000;
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -24,10 +28,12 @@ function readBody(req) {
   return new Promise((resolve, reject) => {
     let body = '';
     req.on('data', (chunk) => {
-      body += chunk;
-      if (body.length > 1_000_000) {
+      if (body.length + chunk.length > MAX_PAYLOAD_SIZE_BYTES) {
         reject(new Error('Payload too large'));
+        req.destroy();
+        return;
       }
+      body += chunk;
     });
     req.on('end', () => resolve(body));
     req.on('error', reject);
@@ -52,7 +58,14 @@ async function writeUsers(usersFile, users) {
 }
 
 function hashPassword(password, salt) {
-  return crypto.pbkdf2Sync(password, salt, 120000, 64, 'sha512').toString('hex');
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, salt, PBKDF2_ITERATIONS, 64, 'sha512', (error, derivedKey) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(derivedKey.toString('hex'));
+    });
+  });
 }
 
 function toPublicUser(user) {
@@ -80,6 +93,15 @@ function createWebsiteServer(options = {}) {
   const publicDir = options.publicDir || DEFAULT_PUBLIC_DIR;
   const usersFile = options.usersFile || DEFAULT_USERS_FILE;
   const sessions = new Map();
+  const cleanupTimer = setInterval(() => {
+    const now = Date.now();
+    for (const [token, session] of sessions.entries()) {
+      if (session.expiresAt <= now) {
+        sessions.delete(token);
+      }
+    }
+  }, SESSION_CLEANUP_INTERVAL_MS);
+  cleanupTimer.unref();
 
   const server = http.createServer(async (req, res) => {
     const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
@@ -108,7 +130,7 @@ function createWebsiteServer(options = {}) {
       try {
         const body = await readBody(req);
         const payload = JSON.parse(body || '{}');
-        const username = String(payload.username || '').trim();
+        const username = String(payload.username || '').trim().toLowerCase();
         const email = String(payload.email || '').trim().toLowerCase();
         const password = String(payload.password || '');
 
@@ -118,8 +140,8 @@ function createWebsiteServer(options = {}) {
         if (username.length < 3) {
           return respondJson(res, 400, { error: 'username must be at least 3 characters' });
         }
-        if (password.length < 8) {
-          return respondJson(res, 400, { error: 'password must be at least 8 characters' });
+        if (password.length < 12) {
+          return respondJson(res, 400, { error: 'password must be at least 12 characters' });
         }
 
         const users = await readUsers(usersFile);
@@ -134,7 +156,7 @@ function createWebsiteServer(options = {}) {
           username,
           email,
           salt,
-          passwordHash: hashPassword(password, salt),
+          passwordHash: await hashPassword(password, salt),
           createdAt: new Date().toISOString()
         };
 
@@ -161,21 +183,32 @@ function createWebsiteServer(options = {}) {
         }
 
         const users = await readUsers(usersFile);
-        const user = users.find((entry) => entry.username.toLowerCase() === identifier || entry.email === identifier);
+        const user = users.find((entry) => entry.username === identifier || entry.email === identifier);
         if (!user) {
           return respondJson(res, 401, { error: 'invalid credentials' });
         }
 
-        const computed = hashPassword(password, user.salt);
-        if (!crypto.timingSafeEqual(Buffer.from(computed, 'hex'), Buffer.from(user.passwordHash, 'hex'))) {
+        const computed = await hashPassword(password, user.salt);
+        const computedBuffer = Buffer.from(computed, 'hex');
+        const storedBuffer = Buffer.from(user.passwordHash, 'hex');
+        if (computedBuffer.length !== storedBuffer.length) {
+          return respondJson(res, 401, { error: 'invalid credentials' });
+        }
+        if (!crypto.timingSafeEqual(computedBuffer, storedBuffer)) {
           return respondJson(res, 401, { error: 'invalid credentials' });
         }
 
-        const token = crypto.randomBytes(24).toString('hex');
-        sessions.set(token, { userId: user.id, createdAt: Date.now() });
+        const token = crypto.randomBytes(32).toString('hex');
+        const now = Date.now();
+        sessions.set(token, {
+          userId: user.id,
+          createdAt: now,
+          expiresAt: now + SESSION_TTL_MS
+        });
 
         return respondJson(res, 200, {
           token,
+          expiresAt: new Date(now + SESSION_TTL_MS).toISOString(),
           user: toPublicUser(user)
         });
       } catch {
@@ -205,6 +238,7 @@ function createWebsiteServer(options = {}) {
   return {
     server,
     close: () => new Promise((resolve, reject) => {
+      clearInterval(cleanupTimer);
       server.close((error) => (error ? reject(error) : resolve()));
     }),
     sessionCount: () => sessions.size

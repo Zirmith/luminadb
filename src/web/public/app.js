@@ -65,8 +65,9 @@
           password: loginForm.password.value
         };
         const result = await submitJson('/api/auth/login', payload);
-        const previewToken = `${result.token.slice(0, 12)}...`;
-        setStatus(statusNode, `Authenticated. Token: ${previewToken}`, 'success');
+        sessionStorage.setItem('luminaToken', result.token);
+        sessionStorage.setItem('luminaTokenExpiresAt', result.expiresAt);
+        setStatus(statusNode, 'Authenticated successfully.', 'success');
       } catch (error) {
         setStatus(statusNode, error.message, 'error');
       }
